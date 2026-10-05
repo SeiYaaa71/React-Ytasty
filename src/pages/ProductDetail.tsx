@@ -3,13 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Grid, CardMedia, Paper, Chip } from '@mui/material';
 import { apiClient } from '../api/client';
 import { Product } from '../types/api';
-import { useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
+import { addItem } from '../features/cart/cartSlice';
 
 export const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const activeRestaurant = useAppSelector((state) => state.restaurant.activeRestaurant);
+  const cartRestaurantId = useAppSelector((state) => state.cart.restaurantId);
+  const cartHasItems = useAppSelector((state) => state.cart.items.length > 0);
+  const dispatch = useAppDispatch();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +34,9 @@ export const ProductDetail: React.FC = () => {
   if (loading) return <LoadingSkeleton count={1}/>;
   if (!product) return <Typography>Produit introuvable</Typography>;
 
-  const disabled = !activeRestaurant?.is_open || !product.is_available;
+  const disabled = !activeRestaurant || !activeRestaurant.is_open || !product.is_available ||
+    product.restaurant_id !== activeRestaurant.id ||
+    (cartHasItems && cartRestaurantId !== product.restaurant_id);
 
   return (
     <Paper sx={{ p: 4, mt: 3, borderRadius: 2 }}>
@@ -83,9 +89,15 @@ export const ProductDetail: React.FC = () => {
             size="large" 
             fullWidth 
             disabled={disabled} 
-            onClick={() => console.log('Ajout panier depuis detail', product)}
+            onClick={() => {
+              if (!activeRestaurant) return;
+              dispatch(addItem({ product, restaurantIsOpen: activeRestaurant.is_open }));
+              navigate('/panier');
+            }}
           >
-            {disabled ? 'Indisponible' : 'Ajouter au panier'}
+            {cartHasItems && cartRestaurantId !== product.restaurant_id
+              ? 'Panier d’un autre restaurant'
+              : disabled ? 'Indisponible' : 'Ajouter au panier'}
           </Button>
         </Grid>
       </Grid>

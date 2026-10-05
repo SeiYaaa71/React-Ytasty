@@ -9,12 +9,10 @@ import { Layout } from './components/layout/Layout';
 import { Home } from './pages/Home';
 import { Catalog } from './pages/Catalog';
 import { ProductDetail } from './pages/ProductDetail';
-
-// Pages vides pour les autres devs
-const Cart = () => <div>Page Panier (Dev B)</div>;
-const Checkout = () => <div>Tunnel Commande (Dev B)</div>;
-const OrderConfirmation = () => <div>Confirmation (Dev B)</div>;
-const OrderTracking = () => <div>Suivi Commande (Dev B)</div>;
+import { Cart } from './pages/Cart';
+import { Checkout } from './pages/Checkout';
+import { OrderConfirmation } from './pages/OrderConfirmation';
+import { OrderTracking } from './pages/OrderTracking';
 const Login = () => <div>Login (Dev C)</div>;
 const Kitchen = () => <div>Cuisine Kanban (Dev C)</div>;
 const AdminProducts = () => <div>Admin Produits (Dev C)</div>;
@@ -34,7 +32,8 @@ export const App: React.FC = () => {
               <Route path="panier" element={<Cart/>} />
               <Route path="commande" element={<Checkout/>} />
               <Route path="confirmation" element={<OrderConfirmation/>} />
-              <Route path="suivi/:order_number?" element={<OrderTracking/>} />
+              <Route path="suivi" element={<OrderTracking/>} />
+              <Route path="suivi/:order_number" element={<OrderTracking/>} />
               
               <Route path="login" element={<Login/>} />
               <Route path="cuisine" element={<Kitchen/>} />

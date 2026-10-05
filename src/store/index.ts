@@ -1,17 +1,18 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import restaurantReducer from '../features/restaurant/restaurantSlice';
-
-// Mocks temporaires pour B et C
-const dummyCartReducer = (state = { itemCount: 0 }, action: any) => state;
-const dummyAuthReducer = (state = { user: null }, action: any) => state;
+import cartReducer from '../features/cart/cartSlice';
 
 export const store = configureStore({
   reducer: {
     restaurant: restaurantReducer,
-    cart: dummyCartReducer,
-    auth: dummyAuthReducer,
+    cart: cartReducer,
+    auth: (state = { user: null }) => state,
   },
+});
+
+store.subscribe(() => {
+  localStorage.setItem('cart', JSON.stringify(store.getState().cart));
 });
 
 export type RootState = ReturnType<typeof store.getState>;

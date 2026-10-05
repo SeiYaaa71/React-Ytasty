@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, TextField, Box, Typography, FormControlLabel, Switch, Chip } from '@mui/material';
+import { Grid, TextField, Box, Typography, FormControlLabel, Switch, Chip, Alert, Snackbar } from '@mui/material';
 import { apiClient } from '../api/client';
 import { Product } from '../types/api';
-import { useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { ProductCard } from '../components/ui/ProductCard';
 import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Navigate } from 'react-router-dom';
+import { addItem } from '../features/cart/cartSlice';
 
 export const Catalog: React.FC = () => {
   const activeRestaurant = useAppSelector((state) => state.restaurant.activeRestaurant);
+  const cartRestaurantId = useAppSelector((state) => state.cart.restaurantId);
+  const dispatch = useAppDispatch();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [cartNotice, setCartNotice] = useState('');
+  const [cartNoticeSeverity, setCartNoticeSeverity] = useState<'success' | 'warning'>('success');
   
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -51,7 +56,15 @@ export const Catalog: React.FC = () => {
   if (!activeRestaurant) return <Navigate replace to="/"/>;
 
   const handleAddToCart = (product: Product) => {
-    console.log('Ajout au panier:', product);
+    if (!activeRestaurant) return;
+    if (cartRestaurantId && cartRestaurantId !== activeRestaurant.id) {
+      setCartNoticeSeverity('warning');
+      setCartNotice('Votre panier contient des produits d’un autre restaurant.');
+      return;
+    }
+    dispatch(addItem({ product, restaurantIsOpen: activeRestaurant.is_open }));
+    setCartNoticeSeverity('success');
+    setCartNotice('Produit ajouté au panier.');
   };
 
   return (
@@ -102,6 +115,9 @@ export const Catalog: React.FC = () => {
           ))}
         </Grid>
       )}
+      <Snackbar open={Boolean(cartNotice)} autoHideDuration={2500} onClose={() => setCartNotice('')}>
+        <Alert severity={cartNoticeSeverity} onClose={() => setCartNotice('')}>{cartNotice}</Alert>
+      </Snackbar>
     </Box>
   );
 };

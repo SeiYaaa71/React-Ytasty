@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Badge, Box, Container } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { clearActiveRestaurant } from '../../features/restaurant/restaurantSlice';
+import { clearCart, selectItemCount } from '../../features/cart/cartSlice';
+import { CartDrawer } from '../../features/cart/CartDrawer';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [cartOpen, setCartOpen] = useState(false);
   const activeRestaurant = useAppSelector((state) => state.restaurant.activeRestaurant);
-  const cartItemCount = useAppSelector((state: any) => state.cart.itemCount);
-  const user = useAppSelector((state: any) => state.auth.user);
+  const cartItemCount = useAppSelector(selectItemCount);
+  const cartHasItems = useAppSelector((state) => state.cart.items.length > 0);
+  const user = useAppSelector((state) => state.auth.user);
 
   const handleChangeRestaurant = () => {
+    if (cartHasItems) {
+      const confirmed = window.confirm(
+        'Changer de restaurant videra votre panier. Voulez-vous continuer ?',
+      );
+      if (!confirmed) return;
+      dispatch(clearCart());
+    }
     dispatch(clearActiveRestaurant());
     navigate('/');
   };
@@ -38,9 +49,10 @@ export const Header: React.FC = () => {
 
           <Box display="flex" alignItems="center" gap={2}>
             {activeRestaurant && (
-              <Button color="inherit" component={Link} to="/panier">
-                Panier
-                <Badge badgeContent={cartItemCount} color="primary" sx={{ ml: 1 }}/>
+              <Button color="inherit" onClick={() => setCartOpen(true)}>
+                <Badge badgeContent={cartItemCount} color="primary">
+                  Panier
+                </Badge>
               </Button>
             )}
             {user ? (
@@ -55,6 +67,7 @@ export const Header: React.FC = () => {
           </Box>
         </Toolbar>
       </Container>
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)}/>
     </AppBar>
   );
 };
