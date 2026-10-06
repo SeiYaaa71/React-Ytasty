@@ -25,6 +25,7 @@ dist-ssr
 
 # Variables d environnement locales
 .env
+.env.example
 
 # Fichiers générés par tsc -b
 *.tsbuildinfo
