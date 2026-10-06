@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useRef, useState } from 'react';
 import {
   Alert, Box, Button, Card, CardActionArea, CardContent, CircularProgress,
   FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, Stack, TextField, Typography,
@@ -20,9 +20,10 @@ export const Checkout: React.FC = () => {
   const [pickupMode, setPickupMode] = useState<PickupMode>('takeaway');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const orderPlaced = useRef(false);
 
   if (!restaurant) return <Navigate replace to="/"/>;
-  if (items.length === 0) return <Navigate replace to="/panier"/>;
+  if (items.length === 0 && !orderPlaced.current) return <Navigate replace to="/panier"/>;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -40,8 +41,9 @@ export const Checkout: React.FC = () => {
           price_at_time: product.price,
         })),
       });
-      dispatch(clearCart());
+      orderPlaced.current = true;
       navigate('/confirmation', { state: { order: response.data } });
+      dispatch(clearCart());
     } catch (submitError) {
       console.error('Impossible de créer la commande.', submitError);
       setError('La commande n’a pas pu être enregistrée. Vérifiez votre connexion puis réessayez.');

@@ -5,6 +5,7 @@ import { useAppSelector, useAppDispatch } from '../../store';
 import { clearActiveRestaurant } from '../../features/restaurant/restaurantSlice';
 import { clearCart, selectItemCount } from '../../features/cart/cartSlice';
 import { CartDrawer } from '../../features/cart/CartDrawer';
+import { UserMenu } from '../../features/auth/UserMenu';
 
 export const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -56,9 +57,7 @@ export const Header: React.FC = () => {
               </Button>
             )}
             {user ? (
-              <Button variant="contained" color="secondary" component={Link} to="/cuisine">
-                Back-Office
-              </Button>
+              <UserMenu/>
             ) : (
               <Button color="inherit" component={Link} to="/login">
                 Connexion

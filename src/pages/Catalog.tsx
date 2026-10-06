@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, TextField, Box, Typography, FormControlLabel, Switch, Chip, Alert, Snackbar } from '@mui/material';
+import { Grid, TextField, Box, FormControlLabel, Switch, Chip, Alert, Snackbar } from '@mui/material';
 import { apiClient } from '../api/client';
 import { Product } from '../types/api';
 import { useAppDispatch, useAppSelector } from '../store';

@@ -2,12 +2,13 @@ import { configureStore } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import restaurantReducer from '../features/restaurant/restaurantSlice';
 import cartReducer from '../features/cart/cartSlice';
+import authReducer from '../features/auth/authSlice';
 
 export const store = configureStore({
   reducer: {
     restaurant: restaurantReducer,
     cart: cartReducer,
-    auth: (state = { user: null }) => state,
+    auth: authReducer,
   },
 });
 
