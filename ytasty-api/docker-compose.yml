@@ -11,6 +11,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+    # Permet de se connecter a la base depuis la machine hote, par exemple
+    # avec TablePlus ou psql, pour verifier le contenu pendant la demo.
+    ports:
+      - "5432:5432"
+
     healthcheck:
       test:
         [
@@ -21,18 +26,23 @@ services:
       timeout: 5s
       retries: 5
 
-
   api:
     build: .
     restart: unless-stopped
 
-    # Cree les tables, insere les donnees initiales, puis lance l'API.
+    env_file:
+      - .env
+
+    environment:
+      # Le host de la base est le nom du service, pas localhost : chaque
+      # conteneur a son propre reseau. Cette valeur prime sur celle du .env.
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+
+    # Cree les tables, insere les donnees initiales si elles manquent,
+    # puis demarre l'API. Le seed est idempotent.
     command: >
       sh -c "uv run python seed.py &&
              uv run uvicorn ytasty.main:app --host 0.0.0.0 --port 8000 --app-dir src"
-
-    env_file:
-      - .env
 
     ports:
       - "8000:8000"
@@ -40,7 +50,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
 
 volumes:
   postgres_data:

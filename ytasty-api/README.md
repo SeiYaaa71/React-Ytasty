@@ -5,27 +5,55 @@ API REST FastAPI pour la plateforme de restauration rapide multi-établissements
 
 ## Démarrage
 
-### Avec Docker (PostgreSQL)
+### Avec Docker — recommandé
 
 ```bash
-cp .env.example .env     # renseigner JWT_SECRET_KEY
+cp .env.example .env
+```
+
+Ouvre `.env` et remplace `JWT_SECRET_KEY` par une valeur longue :
+
+```bash
+python3 -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+Puis :
+
+```bash
 docker compose up --build
 ```
 
-L'API écoute sur `http://localhost:8000`. Le conteneur crée les tables et
-insère les données initiales au démarrage.
+Deux conteneurs démarrent : PostgreSQL et l'API. Au premier lancement, le
+conteneur `api` crée les tables, insère les données initiales, puis lance
+uvicorn. L'API répond sur `http://localhost:8000`.
+
+Commandes utiles :
+
+| Commande | Effet |
+| --- | --- |
+| `docker compose up` | démarre sans rebuild |
+| `docker compose up -d` | démarre en arrière-plan |
+| `docker compose logs -f api` | suit les logs de l'API |
+| `docker compose down` | arrête tout, garde les données |
+| `docker compose down -v` | arrête et **efface la base** |
+| `docker compose up --build` | reconstruit après un changement de dépendance |
+
+Le code n'est pas monté en volume : après une modification d'un fichier Python,
+relance avec `docker compose up --build`.
 
 ### En local sans Docker (SQLite)
 
+Utile pour développer vite, sans PostgreSQL. Nécessite **Python 3.12 ou plus**
+(la syntaxe `int | None` des schémas n'existe pas avant 3.10).
+
 ```bash
-python -m venv .venv && source .venv/bin/activate
-pip install fastapi "uvicorn[standard]" sqlalchemy pyjwt "pwdlib[argon2]" "pydantic[email]"
+python3.12 -m venv .venv && source .venv/bin/activate
+pip install fastapi "uvicorn[standard]" sqlalchemy pyjwt "pwdlib[argon2]" "pydantic[email]" "psycopg[binary]"
 python seed.py
 PYTHONPATH=src uvicorn ytasty.main:app --reload --port 8000
 ```
 
-Sans `DATABASE_URL`, l'API crée un fichier `ytasty.db` en SQLite. C'est le mode
-le plus rapide pour développer le frontend.
+Sans `DATABASE_URL`, l'API crée un fichier `ytasty.db` en SQLite.
 
 Documentation interactive : `http://localhost:8000/docs`
 
