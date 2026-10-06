@@ -4,6 +4,7 @@ import {
 } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { logout } from './authSlice';
@@ -48,6 +49,10 @@ export const UserMenu: React.FC = () => {
         </Box>
       </Button>
       <Menu anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)}>
+        <MenuItem component={Link} to="/suivi" onClick={() => setAnchor(null)}>
+          <ListItemIcon><LocalShippingOutlinedIcon fontSize="small" /></ListItemIcon>
+          Suivre une commande
+        </MenuItem>
         <MenuItem component={Link} to="/backoffice/cuisine" onClick={() => setAnchor(null)}>
           <ListItemIcon><DashboardOutlinedIcon fontSize="small" /></ListItemIcon>
           Back-office

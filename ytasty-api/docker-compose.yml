@@ -14,7 +14,7 @@ services:
     # Permet de se connecter a la base depuis la machine hote, par exemple
     # avec TablePlus ou psql, pour verifier le contenu pendant la demo.
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
     healthcheck:
       test:

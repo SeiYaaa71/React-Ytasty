@@ -2,6 +2,8 @@ import React from 'react';
 import { Card, CardMedia, CardContent, Typography, CardActions, Button, Box } from '@mui/material';
 import { Product } from '../../types/api';
 import { Link } from 'react-router-dom';
+import { getProductImage } from '../../utils/productImage';
+import { PLACEHOLDER_IMAGE } from '../../constants';
 
 interface ProductCardProps {
   product: Product;
@@ -17,8 +19,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart, 
       <CardMedia 
         component="img" 
         height="200" 
-        image={product.image_url || 'https://via.placeholder.com/200'} 
+        image={getProductImage(product)}
         alt={product.name} 
+        onError={(event: React.SyntheticEvent<HTMLImageElement>) => {
+          event.currentTarget.src = PLACEHOLDER_IMAGE;
+        }}
         sx={{ filter: disabled ? 'grayscale(100%)' : 'none' }}
       />
       <CardContent sx={{ flexGrow: 1 }}>

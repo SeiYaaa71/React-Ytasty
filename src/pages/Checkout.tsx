@@ -5,6 +5,7 @@ import {
 } from '@mui/material';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { apiClient } from '../api/client';
+import { getErrorMessage } from '../api/errors';
 import { useAppDispatch, useAppSelector } from '../store';
 import { clearCart, selectTotal } from '../features/cart/cartSlice';
 import { Order, PickupMode } from '../types/api';
@@ -32,13 +33,14 @@ export const Checkout: React.FC = () => {
     try {
       const response = await apiClient.post<Order>('/orders', {
         restaurant_id: restaurant.id,
-        customer_name: name.trim(),
-        customer_email: email.trim(),
-        pickup_mode: pickupMode,
+        customer: {
+          name: name.trim(),
+          email: email.trim(),
+        },
+        pickup_mode: pickupMode === 'on_site' ? 'onsite' : pickupMode,
         items: items.map(({ product, quantity }) => ({
           product_id: product.id,
           quantity,
-          price_at_time: product.price,
         })),
       });
       orderPlaced.current = true;
@@ -46,7 +48,10 @@ export const Checkout: React.FC = () => {
       dispatch(clearCart());
     } catch (submitError) {
       console.error('Impossible de créer la commande.', submitError);
-      setError('La commande n’a pas pu être enregistrée. Vérifiez votre connexion puis réessayez.');
+      setError(getErrorMessage(
+        submitError,
+        'La commande n’a pas pu être enregistrée. Vérifiez les informations puis réessayez.',
+      ));
     } finally {
       setSubmitting(false);
     }

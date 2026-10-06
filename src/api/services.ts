@@ -28,6 +28,11 @@ export const setRestaurantAvailability = (id: Id, isOpen: boolean) =>
   apiClient.patch<Restaurant>(`/restaurants/${id}/availability`, { is_open: isOpen }).then((r) => r.data);
 
 // Produits
+const toApiProductPayload = ({ image_url, ...payload }: Partial<ProductPayload>) => ({
+  ...payload,
+  ...(image_url === undefined ? {} : { image: image_url }),
+});
+
 export const getProducts = (filters: ProductFilters = {}) => {
   const params: Record<string, string> = {};
   if (filters.restaurant_id !== undefined) params.restaurant_id = String(filters.restaurant_id);
@@ -38,10 +43,10 @@ export const getProducts = (filters: ProductFilters = {}) => {
 };
 
 export const createProduct = (payload: ProductPayload) =>
-  apiClient.post<Product>('/products', payload).then((r) => r.data);
+  apiClient.post<Product>('/products', toApiProductPayload(payload)).then((r) => r.data);
 
 export const updateProduct = (id: Id, payload: Partial<ProductPayload>) =>
-  apiClient.patch<Product>(`/products/${id}`, payload).then((r) => r.data);
+  apiClient.patch<Product>(`/products/${id}`, toApiProductPayload(payload)).then((r) => r.data);
 
 export const deleteProduct = (id: Id) => apiClient.delete(`/products/${id}`).then(() => undefined);
 

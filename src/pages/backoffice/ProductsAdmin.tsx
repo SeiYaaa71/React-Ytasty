@@ -21,6 +21,7 @@ import { useRestaurantScope } from '../../features/backoffice/useRestaurantScope
 import { RestaurantPicker } from '../../features/backoffice/RestaurantPicker';
 import { ProductFormDialog } from '../../features/backoffice/ProductFormDialog';
 import { formatPrice, sameId } from '../../utils/format';
+import { getProductImage } from '../../utils/productImage';
 
 export const ProductsAdmin: React.FC = () => {
   const notify = useNotify();
@@ -203,8 +204,11 @@ export const ProductsAdmin: React.FC = () => {
                     <Stack direction="row" sx={{ alignItems: 'center', gap: 1.5 }}>
                       <Avatar
                         variant="rounded"
-                        src={product.image_url || PLACEHOLDER_IMAGE}
+                        src={getProductImage(product)}
                         alt={product.name}
+                        imgProps={{ onError: (event: React.SyntheticEvent<HTMLImageElement>) => {
+                          event.currentTarget.src = PLACEHOLDER_IMAGE;
+                        } }}
                         sx={{ width: 48, height: 48, filter: product.is_available ? 'none' : 'grayscale(100%)' }}
                       />
                       <Box>

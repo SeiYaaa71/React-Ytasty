@@ -6,6 +6,8 @@ import { Product } from '../types/api';
 import { useAppDispatch, useAppSelector } from '../store';
 import { LoadingSkeleton } from '../components/ui/LoadingSkeleton';
 import { addItem } from '../features/cart/cartSlice';
+import { getProductImage } from '../utils/productImage';
+import { PLACEHOLDER_IMAGE } from '../constants';
 
 export const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,8 +50,11 @@ export const ProductDetail: React.FC = () => {
           <CardMedia 
             component="img" 
             width="100%" 
-            image={product.image_url || 'https://via.placeholder.com/500'} 
+            image={getProductImage(product)}
             alt={product.name} 
+            onError={(event: React.SyntheticEvent<HTMLImageElement>) => {
+              event.currentTarget.src = PLACEHOLDER_IMAGE;
+            }}
             sx={{ borderRadius: 2, filter: disabled ? 'grayscale(100%)' : 'none' }}
           />
         </Grid>

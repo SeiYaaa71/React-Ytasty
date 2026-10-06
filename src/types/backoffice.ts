@@ -39,7 +39,7 @@ export interface HealthResponse {
   [key: string]: unknown;
 }
 
-export type ProductPayload = Omit<Product, 'id'>;
+export type ProductPayload = Omit<Product, 'id' | 'image'> & { image_url: string };
 
 export interface ProductFilters {
   restaurant_id?: Id;

@@ -12,7 +12,8 @@ export interface Product {
   description: string;
   price: number;
   category: string;
-  image_url: string;
+  image?: string;
+  image_url?: string;
   is_available: boolean;
   restaurant_id: string;
   ingredients: string[];
@@ -26,12 +27,13 @@ export interface User {
 }
 
 export type OrderStatus = 'pending' | 'validated' | 'preparing' | 'ready' | 'collected' | 'cancelled';
-export type PickupMode = 'on_site' | 'takeaway';
+export type PickupMode = 'onsite' | 'on_site' | 'takeaway';
 
 export interface OrderItem {
   product_id: string;
   quantity: number;
-  price_at_time: number;
+  unit_price?: number;
+  price_at_time?: number;
   product?: Product;
   product_name?: string;
 }

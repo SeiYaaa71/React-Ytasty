@@ -6,6 +6,7 @@ import Grid from '@mui/material/Grid2';
 import type { Product, Restaurant } from '../../types/api';
 import type { Id, ProductPayload } from '../../types/backoffice';
 import { CATEGORIES, PLACEHOLDER_IMAGE } from '../../constants';
+import { getProductImage } from '../../utils/productImage';
 
 interface ProductFormDialogProps {
   open: boolean;
@@ -44,7 +45,7 @@ const fromProduct = (product: Product): FormState => ({
   description: product.description ?? '',
   category: product.category,
   price: String(product.price),
-  image_url: product.image_url ?? '',
+  image_url: getProductImage(product),
   restaurant_id: String(product.restaurant_id),
   ingredients: product.ingredients ?? [],
   is_available: product.is_available,

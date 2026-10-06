@@ -44,7 +44,21 @@ RESTAURANTS = [
     },
 ]
 
-IMAGE = "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"
+LEGACY_IMAGE = "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800"
+
+IMAGE_BY_PRODUCT = {
+    "Le Crousty Signature": LEGACY_IMAGE,
+    "Double Bacon": "https://images.unsplash.com/photo-1550317138-10000687a72b?w=800",
+    "Le Vegetarien": "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=800",
+    "Menu Signature": "https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=800",
+    "Menu Double Bacon": "https://images.unsplash.com/photo-1561758033-d89a9ad46330?w=800",
+    "Frites maison": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800",
+    "Potatoes epicees": "https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg?auto=compress&cs=tinysrgb&w=800",
+    "Coca-Cola 33cl": "https://images.pexels.com/photos/35020136/pexels-photo-35020136/free-photo-of-close-up-of-a-coca-cola-bottle-on-white-background.jpeg?h=1000&w=1500&fit=crop",
+    "Limonade artisanale": "https://images.pexels.com/photos/27551844/pexels-photo-27551844/free-photo-of-a-glass-of-lemonade-with-mint-and-a-straw.jpeg?h=1000&w=1500&fit=crop",
+    "Cookie chocolat": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=800",
+    "Brownie": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=800",
+}
 
 CARTE = [
     ("Le Crousty Signature", "burgers", 12.90,
@@ -122,10 +136,12 @@ def main() -> None:
                     Product.restaurant_id == restaurant.id,
                 ).first()
                 if exists:
+                    if exists.image == LEGACY_IMAGE:
+                        exists.image = IMAGE_BY_PRODUCT[name]
                     continue
                 db.add(Product(
                     name=name,
-                    image=IMAGE,
+                    image=IMAGE_BY_PRODUCT[name],
                     description=f"{name}, prepare minute dans notre cuisine de {restaurant.city}.",
                     category=category,
                     price=price,

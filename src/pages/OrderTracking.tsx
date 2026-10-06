@@ -135,7 +135,7 @@ export const OrderTracking: React.FC = () => {
               {order.items.map((item, index) => (
                 <Box key={`${item.product_id}-${index}`} display="flex" justifyContent="space-between" gap={2}>
                   <Typography>{item.product?.name ?? item.product_name ?? item.product_id} × {item.quantity}</Typography>
-                  <Typography>{(item.price_at_time * item.quantity).toFixed(2)}€</Typography>
+                  <Typography>{((item.unit_price ?? item.price_at_time ?? 0) * item.quantity).toFixed(2)}€</Typography>
                 </Box>
               ))}
               <Box display="flex" justifyContent="space-between">
