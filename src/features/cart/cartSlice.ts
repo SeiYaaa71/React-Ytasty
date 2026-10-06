@@ -23,7 +23,7 @@ const isCartItem = (value: unknown): value is CartItem => {
     typeof product === 'object' &&
     product !== null &&
     'id' in product &&
-    typeof product.id === 'string' &&
+    (typeof product.id === 'string' || typeof product.id === 'number') &&
     'name' in product &&
     typeof product.name === 'string' &&
     'price' in product &&
@@ -31,7 +31,7 @@ const isCartItem = (value: unknown): value is CartItem => {
     'is_available' in product &&
     typeof product.is_available === 'boolean' &&
     'restaurant_id' in product &&
-    typeof product.restaurant_id === 'string'
+    (typeof product.restaurant_id === 'string' || typeof product.restaurant_id === 'number')
   );
 };
 
@@ -47,9 +47,9 @@ const loadCart = (): CartState => {
         Array.isArray(value.items) &&
         value.items.every(isCartItem) &&
         'restaurantId' in value &&
-        (typeof value.restaurantId === 'string' || value.restaurantId === null)
+        (typeof value.restaurantId === 'string' || typeof value.restaurantId === 'number' || value.restaurantId === null)
       ) {
-        return { items: value.items, restaurantId: value.restaurantId };
+        return { items: value.items, restaurantId: value.restaurantId as string | null };
       }
     }
   } catch (error) {
